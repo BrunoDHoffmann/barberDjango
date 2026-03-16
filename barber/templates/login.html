@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block titulo %}Login{% endblock %}
+{% block conteudo %}
+<div class="form-card">
+    <h2>Entrar</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <label>Usuário</label>
+        <input type="text" name="username" required autofocus>
+        <label>Senha</label>
+        <input type="password" name="senha" required>
+        <button type="submit" style="width:100%">Entrar</button>
+    </form>
+    <p class="form-footer">Não tem conta? <a href="{% url 'cadastro' %}">Cadastrar</a></p>
+</div>
+{% endblock %}

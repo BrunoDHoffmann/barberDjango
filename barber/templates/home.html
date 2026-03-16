@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block titulo %}Início{% endblock %}
+{% block conteudo %}
+<h2>Olá, {{ request.user.first_name }} 👋</h2>
+<h3>Serviços disponíveis</h3>
+{% for servico in servicos %}
+<div class="card servico-card">
+    <div class="servico-info">
+        <strong>{{ servico.nome }}</strong>
+        <p class="text-muted">{{ servico.duracao_minutos }} minutos</p>
+    </div>
+    <span class="servico-preco">R$ {% widthratio servico.preco_centavos 100 1 %},00</span>
+</div>
+{% empty %}
+<div class="empty-state">Nenhum serviço disponível no momento.</div>
+{% endfor %}
+<div class="links">
+    <a href="{% url 'agendar' %}" class="btn">Fazer agendamento</a>
+    <a href="{% url 'meus_agendamentos' %}" class="btn btn-secondary">Meus agendamentos</a>
+</div>
+{% endblock %}

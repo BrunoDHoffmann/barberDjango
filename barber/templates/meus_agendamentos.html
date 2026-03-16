@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block titulo %}Meus Agendamentos{% endblock %}
+{% block conteudo %}
+<h2>Meus agendamentos</h2>
+{% for agendamento in agendamentos %}
+<div class="card">
+    <div class="agendamento-header">
+        <div>
+            <span class="agendamento-data">{{ agendamento.data }}</span>
+            <span class="agendamento-hora">{{ agendamento.hora_inicio }} às {{ agendamento.hora_fim }}</span>
+        </div>
+        {% if agendamento.status == 0 %}<span class="badge badge-pendente">Pendente</span>
+        {% elif agendamento.status == 1 %}<span class="badge badge-agendado">Agendado</span>
+        {% elif agendamento.status == 2 %}<span class="badge badge-cancelado">Cancelado</span>
+        {% else %}<span class="badge badge-concluido">Concluído</span>{% endif %}
+    </div>
+    <p class="text-muted">Funcionário: <span class="text-light">{{ agendamento.funcionario.nome }}</span></p>
+    <p class="text-muted">Serviços:
+        {% for item in agendamento.agendamento_servicos.all %}
+            <span class="text-light">{{ item.servico.nome }}</span>{% if not forloop.last %}, {% endif %}
+        {% endfor %}
+    </p>
+    {% if agendamento.status == 0 or agendamento.status == 1 %}
+    <div class="links">
+        <a href="{% url 'cancelar_agendamento' agendamento.id %}" class="btn btn-danger">Cancelar</a>
+    </div>
+    {% endif %}
+</div>
+{% empty %}
+<div class="empty-state"><p>Você ainda não tem agendamentos.</p></div>
+{% endfor %}
+<div class="links">
+    <a href="{% url 'agendar' %}" class="btn">Novo agendamento</a>
+    <a href="{% url 'home' %}" class="btn btn-secondary">Voltar</a>
+</div>
+{% endblock %}

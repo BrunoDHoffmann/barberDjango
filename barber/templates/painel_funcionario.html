@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block titulo %}Painel{% endblock %}
+{% block conteudo %}
+<h2>Painel do funcionário</h2>
+<form method="GET" class="filtro-form">
+    <div>
+        <label>Filtrar por data</label>
+        <input type="date" name="data" value="{{ data_filtro }}">
+    </div>
+    <button type="submit">Filtrar</button>
+    {% if data_filtro != hoje %}
+    <a href="{% url 'painel_funcionario' %}" class="btn btn-secondary">Hoje</a>
+    {% endif %}
+</form>
+<h3>Agendamentos — {{ data_filtro }}</h3>
+{% for agendamento in agendamentos %}
+<div class="card">
+    <div class="agendamento-header">
+        <strong>{{ agendamento.hora_inicio }} às {{ agendamento.hora_fim }}</strong>
+        {% if agendamento.status == 0 %}<span class="badge badge-pendente">Pendente</span>
+        {% elif agendamento.status == 1 %}<span class="badge badge-agendado">Agendado</span>
+        {% elif agendamento.status == 2 %}<span class="badge badge-cancelado">Cancelado</span>
+        {% else %}<span class="badge badge-concluido">Concluído</span>{% endif %}
+    </div>
+    <p class="text-muted">Cliente: <span class="text-light">{{ agendamento.usuario.user.get_full_name }}</span></p>
+    <p class="text-muted">Funcionário: <span class="text-light">{{ agendamento.funcionario.nome }}</span></p>
+    <p class="text-muted">Serviços:
+        {% for item in agendamento.agendamento_servicos.all %}
+            <span class="text-light">{{ item.servico.nome }}</span>{% if not forloop.last %}, {% endif %}
+        {% endfor %}
+    </p>
+</div>
+{% empty %}
+<div class="empty-state"><p>Nenhum agendamento para este dia.</p></div>
+{% endfor %}
+<div class="links">
+    <a href="{% url 'home' %}" class="btn btn-secondary">Voltar</a>
+</div>
+{% endblock %}

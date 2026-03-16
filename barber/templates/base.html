@@ -1,0 +1,37 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block titulo %}BarberDjango{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+{% if request.user.is_authenticated %}
+<nav>
+    <a class="logo" href="{% url 'home' %}">✂ BarberDjango</a>
+    <div class="nav-links">
+        <a href="{% url 'agendar' %}">Agendar</a>
+        <a href="{% url 'meus_agendamentos' %}">Meus agendamentos</a>
+        <a href="{% url 'painel_funcionario' %}">Painel</a>
+        <a href="{% url 'logout' %}">Sair</a>
+    </div>
+</nav>
+{% endif %}
+
+<div class="container">
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="message {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% block conteudo %}{% endblock %}
+</div>
+<script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

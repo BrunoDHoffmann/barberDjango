@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block titulo %}Agendar{% endblock %}
+{% block conteudo %}
+<h2>Novo agendamento</h2>
+<form method="POST">
+    {% csrf_token %}
+    <h3>Escolha os serviços</h3>
+    {% for servico in servicos %}
+    <label class="checkbox-label">
+        <input type="checkbox" name="servicos" value="{{ servico.id }}">
+        <span>
+            {{ servico.nome }}
+            <span class="text-muted"> — {{ servico.duracao_minutos }} min — R$ {% widthratio servico.preco_centavos 100 1 %},00</span>
+        </span>
+    </label>
+    {% endfor %}
+    <h3>Funcionário</h3>
+    <select name="funcionario" required>
+        <option value="">Selecione um funcionário</option>
+        {% for funcionario in funcionarios %}
+        <option value="{{ funcionario.id }}">{{ funcionario.nome }}</option>
+        {% endfor %}
+    </select>
+    <h3>Data e horário</h3>
+    <label>Data</label>
+    <input type="date" name="data" required>
+    <label>Horário de início</label>
+    <input type="time" name="hora_inicio" required>
+    <div class="links">
+        <button type="submit">Confirmar agendamento</button>
+        <a href="{% url 'home' %}" class="btn btn-secondary">Voltar</a>
+    </div>
+</form>
+{% endblock %}

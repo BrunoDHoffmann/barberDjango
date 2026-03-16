@@ -1,147 +1,178 @@
 from django.db import models
-from datetime import datetime
+from django.contrib.auth.models import User
+
 
 class Usuario(models.Model):
-    nome = models.CharField(max_length=255, null=False, blank=False)
-    email = models.EmailField(max_length=255, unique=True)
-    telefone = models.CharField(max_length=20, unique=True)
+    """
+    Perfil do usuário. O login é gerenciado pelo User do Django.
+    Aqui guardamos apenas os dados extras.
+    """
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name='perfil'
+    )
+    telefone = models.CharField(max_length=20)
     criado_em = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
-    
+
     class Meta:
         db_table = 'usuarios'
-        verbose_name = 'Usuario'
-        verbose_name_plural = 'Usuarios'
-        
+        verbose_name = 'Usuário'
+        verbose_name_plural = 'Usuários'
+
     def __str__(self):
-        return self.nome
-    
+        return self.user.get_full_name() or self.user.username
+
+
 class Funcionario(models.Model):
-    nome = models.CharField(max_length=255, null=False, blank=False)
+    nome = models.CharField(max_length=255)
     criado_em = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
-    
+
     class Meta:
         db_table = 'funcionarios'
-        verbose_name = 'Funcionario'
-        verbose_name_plural = 'Funcionarios'
-        
+        verbose_name = 'Funcionário'
+        verbose_name_plural = 'Funcionários'
+
     def __str__(self):
         return self.nome
-    
+
+
 class Servico(models.Model):
-    nome = models.CharField(max_length=100, null=False, blank=False)
-    duracao_minutos = models.IntegerField(null=False, blank=False)
-    preco_centavos = models.IntegerField(null=False, blank=False)
+    nome = models.CharField(max_length=100)
+    duracao_minutos = models.IntegerField()
+    preco_centavos = models.IntegerField()
     is_active = models.BooleanField(default=True)
-    
+
     class Meta:
         db_table = 'servicos'
         verbose_name = 'Serviço'
         verbose_name_plural = 'Serviços'
-    
+
     def __str__(self):
         return self.nome
-    
+
+
 class DisponibilidadeFuncionario(models.Model):
     DIAS = [(i, d) for i, d in enumerate(
-        ['Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo']
+        ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo']
     )]
-    funcionario = models.ForeignKey(Funcionario, on_delete=models.CASCADE, null=False, blank=False, related_name='disponibilidades')
-    dia_semana = models.IntegerField(choices=DIAS, null=False, blank=False)
-    hora_inicio = models.TimeField(null=False, blank=False)
-    hora_fim = models.TimeField(null=False, blank=False)
-    
+    funcionario = models.ForeignKey(
+        Funcionario,
+        on_delete=models.CASCADE,
+        related_name='disponibilidades'
+    )
+    dia_semana = models.IntegerField(choices=DIAS)
+    hora_inicio = models.TimeField()
+    hora_fim = models.TimeField()
+
     class Meta:
         db_table = 'disponibilidade_funcionario'
-        verbose_name = 'Disponibilidade de Funcionario'
-        verbose_name_plural = 'Disponibilidade de Funcionarios'
-        
+        verbose_name = 'Disponibilidade de Funcionário'
+        verbose_name_plural = 'Disponibilidades de Funcionários'
+
     def __str__(self):
-        return self.funcionario
-    
+        return f"{self.funcionario.nome} - {self.get_dia_semana_display()}"
+
+
 class Agendamento(models.Model):
-    STATUS = [(i, d) for i, d in enumerate(
-        ['Pendente','Agendado','Cancelado','Concluido']
-    )]
-    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, null=False, blank=False, related_name='agendamentos')
-    funcionario = models.ForeignKey(Funcionario, on_delete=models.CASCADE, null=False, blank=False, related_name='agendamentos')
-    data = models.DateField(null=False, blank=False)
-    hora_inicio = models.TimeField(null=False, blank=False)
-    hora_fim = models.TimeField(null=False, blank=False)
-    status = models.IntegerField(choices=STATUS)
-    
+    STATUS = [
+        (0, 'Pendente'),
+        (1, 'Agendado'),
+        (2, 'Cancelado'),
+        (3, 'Concluído'),
+    ]
+    usuario = models.ForeignKey(
+        Usuario,
+        on_delete=models.CASCADE,
+        related_name='agendamentos'
+    )
+    funcionario = models.ForeignKey(
+        Funcionario,
+        on_delete=models.CASCADE,
+        related_name='agendamentos'
+    )
+    data = models.DateField()
+    hora_inicio = models.TimeField()
+    hora_fim = models.TimeField()
+    status = models.IntegerField(choices=STATUS, default=0)
+    criado_em = models.DateTimeField(auto_now_add=True)
+
     class Meta:
         db_table = 'agendamentos'
         verbose_name = 'Agendamento'
         verbose_name_plural = 'Agendamentos'
-        
+
     def __str__(self):
-        return f"{self.usuario.nome} com {self.funcionario.nome} em {self.data}"
-    
+        return f"{self.usuario} com {self.funcionario.nome} em {self.data}"
+
+
 class AgendamentoServico(models.Model):
-    agendamento = models.ForeignKey(Agendamento, on_delete=models.CASCADE, related_name='agendamento_servicos')
-    servico = models.ForeignKey(Servico, on_delete=models.CASCADE, related_name='agendamento_servicos')
-    
+    agendamento = models.ForeignKey(
+        Agendamento,
+        on_delete=models.CASCADE,
+        related_name='agendamento_servicos'
+    )
+    servico = models.ForeignKey(
+        Servico,
+        on_delete=models.CASCADE,
+        related_name='agendamento_servicos'
+    )
+
     class Meta:
         db_table = 'agendamento_servicos'
         verbose_name = 'Agendamento Serviço'
         verbose_name_plural = 'Agendamento Serviços'
-    
-    def __str__(self):
-        return f"{self.funcionario.nome} - {self.get_dia_semana_display()}"
-    
-class Pagamento(models.Model):
-    """
-    Armazena a cobrança criada na AbacatePay.
-    Cada agendamento pode ter um pagamento vinculado.
-    """
 
+    def __str__(self):
+        return f"{self.agendamento} - {self.servico.nome}"
+
+
+class Pagamento(models.Model):
     STATUS_CHOICES = [
         ('PENDING', 'Pendente'),
         ('PAID', 'Pago'),
         ('CANCELLED', 'Cancelado'),
         ('EXPIRED', 'Expirado'),
     ]
-
     agendamento = models.OneToOneField(
         Agendamento,
         on_delete=models.CASCADE,
         related_name='pagamento'
     )
-
-    # Dados que vêm da AbacatePay ao criar a cobrança
-    abacatepay_id = models.CharField(max_length=100, unique=True)
-    url_checkout = models.URLField()
+    abacatepay_id = models.CharField(max_length=100, unique=True, blank=True, null=True)
+    url_checkout = models.URLField(blank=True, null=True)
     valor_centavos = models.IntegerField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
-
-    # Dados do PIX (QR Code)
-    br_code = models.TextField(blank=True)        # código copia-e-cola
-    br_code_base64 = models.TextField(blank=True) # imagem do QR Code em base64
-
+    br_code = models.TextField(blank=True)
+    br_code_base64 = models.TextField(blank=True)
     criado_em = models.DateTimeField(auto_now_add=True)
     atualizado_em = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        db_table = 'pagamentos'
+        verbose_name = 'Pagamento'
+        verbose_name_plural = 'Pagamentos'
+
     def __str__(self):
-        return f"Pagamento {self.abacatepay_id} - {self.status}"
+        return f"Pagamento de {self.agendamento} - {self.status}"
 
 
 class WebhookAbacatePay(models.Model):
-    """
-    Registra cada notificação recebida da AbacatePay.
-    Útil para auditoria e para reprocessar eventos se necessário.
-    """
-
     pagamento = models.ForeignKey(
         Pagamento,
         on_delete=models.CASCADE,
         related_name='webhooks'
     )
-
-    evento = models.CharField(max_length=100)   # ex: "billing.paid"
-    payload = models.JSONField()                 # corpo completo do webhook
+    evento = models.CharField(max_length=100)
+    payload = models.JSONField()
     recebido_em = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'webhooks_abacatepay'
+        verbose_name = 'Webhook AbacatePay'
+        verbose_name_plural = 'Webhooks AbacatePay'
 
     def __str__(self):
         return f"Webhook {self.evento} - {self.recebido_em}"
