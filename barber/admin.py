@@ -2,9 +2,9 @@ from django.contrib import admin
 from .models import *
 
 class ListaFuncionarios(admin.ModelAdmin):
-    list_display = ("id", "nome", "is_active")
-    list_display_links = ("nome", "id")
-    search_fields = ("nome",)
+    list_display = ("id", "user", "is_active")
+    list_display_links = ("user", "id")
+    search_fields = ("user",)
     list_per_page = 10
     list_editable = ("is_active",)
     

@@ -26,7 +26,11 @@ class Usuario(models.Model):
 
 
 class Funcionario(models.Model):
-    nome = models.CharField(max_length=255)
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name='funcionario'
+    )
     criado_em = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
 
@@ -36,7 +40,7 @@ class Funcionario(models.Model):
         verbose_name_plural = 'Funcionários'
 
     def __str__(self):
-        return self.nome
+        return self.user.get_full_name() or self.user.username
 
 
 class Servico(models.Model):

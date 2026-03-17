@@ -1,9 +1,57 @@
 [
   {
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+      "username": "carlos.silva",
+      "password": "pbkdf2_sha256$870000$test$hashedpassword",
+      "first_name": "Carlos",
+      "last_name": "Silva",
+      "email": "carlos@barbearia.com",
+      "is_staff": false,
+      "is_active": true,
+      "is_superuser": false,
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 2,
+    "fields": {
+      "username": "rafael.souza",
+      "password": "pbkdf2_sha256$870000$test$hashedpassword",
+      "first_name": "Rafael",
+      "last_name": "Souza",
+      "email": "rafael@barbearia.com",
+      "is_staff": false,
+      "is_active": true,
+      "is_superuser": false,
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 3,
+    "fields": {
+      "username": "diego.martins",
+      "password": "pbkdf2_sha256$870000$test$hashedpassword",
+      "first_name": "Diego",
+      "last_name": "Martins",
+      "email": "diego@barbearia.com",
+      "is_staff": false,
+      "is_active": true,
+      "is_superuser": false,
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
     "model": "barber.funcionario",
     "pk": 1,
     "fields": {
-      "nome": "Carlos Silva",
+      "user": 1,
       "criado_em": "2026-01-01T08:00:00Z",
       "is_active": true
     }
@@ -12,7 +60,7 @@
     "model": "barber.funcionario",
     "pk": 2,
     "fields": {
-      "nome": "Rafael Souza",
+      "user": 2,
       "criado_em": "2026-01-01T08:00:00Z",
       "is_active": true
     }
@@ -21,7 +69,7 @@
     "model": "barber.funcionario",
     "pk": 3,
     "fields": {
-      "nome": "Diego Martins",
+      "user": 3,
       "criado_em": "2026-01-01T08:00:00Z",
       "is_active": true
     }

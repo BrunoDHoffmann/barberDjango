@@ -21,6 +21,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'axes',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -30,7 +31,18 @@ INSTALLED_APPS = [
     'barber.apps.BarberConfig',
 ]
 
+AUTHENTICATION_BACKENDS = [
+    'axes.backends.AxesStandaloneBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+AXES_FAILURE_LIMIT = 5
+
+# Bloqueia por 1 hora
+AXES_COOLOFF_TIME = 1
+
 MIDDLEWARE = [
+    'axes.middleware.AxesMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -52,6 +64,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'barber.context_processors.usuario_context',
             ],
         },
     },
@@ -108,3 +121,25 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Tempo de expiração da sessão — 8 horas
+SESSION_COOKIE_AGE = 60 * 60 * 8
+
+# Sessão expira quando o navegador fecha
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+# Cookie só trafega via HTTPS (ativar em produção)
+SESSION_COOKIE_SECURE = False  # mude para True em produção
+
+# Cookie não acessível via JavaScript — proteção contra XSS
+SESSION_COOKIE_HTTPONLY = True
+
+# Proteção CSRF mais forte
+CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_SECURE = False  # mude para True em produção
+
+# Proteção contra clickjacking
+X_FRAME_OPTIONS = 'DENY'
+
+# Evita que o navegador adivinhe o tipo do arquivo
+SECURE_CONTENT_TYPE_NOSNIFF = True

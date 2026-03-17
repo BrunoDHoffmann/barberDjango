@@ -13,10 +13,14 @@
 <nav>
     <a class="logo" href="{% url 'home' %}">✂ BarberDjango</a>
     <div class="nav-links">
-        <a href="{% url 'agendar' %}">Agendar</a>
-        <a href="{% url 'meus_agendamentos' %}">Meus agendamentos</a>
-        <a href="{% url 'painel_funcionario' %}">Painel</a>
-        <a href="{% url 'logout' %}">Sair</a>
+        {% if is_func %}
+            <a href="{% url 'painel_funcionario' %}">Painel</a>
+            <a href="{% url 'logout' %}">Sair</a>
+        {% else %}
+            <a href="{% url 'agendar' %}">Agendar</a>
+            <a href="{% url 'meus_agendamentos' %}">Meus agendamentos</a>
+            <a href="{% url 'logout' %}">Sair</a>
+        {% endif %}
     </div>
 </nav>
 {% endif %}
