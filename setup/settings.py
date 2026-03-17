@@ -138,6 +138,8 @@ SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = True
 CSRF_COOKIE_SECURE = False  # mude para True em produção
 
+LOGIN_URL = '/login/'
+
 # Proteção contra clickjacking
 X_FRAME_OPTIONS = 'DENY'
 

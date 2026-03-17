@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block titulo %}Agendar{% endblock %}
 {% block conteudo %}
 <h2>Novo agendamento</h2>
@@ -8,7 +9,12 @@
     <h3>Escolha os serviços</h3>
     {% for servico in servicos %}
     <label class="checkbox-label">
-        <input type="checkbox" name="servicos" value="{{ servico.id }}">
+        <input
+            type="checkbox"
+            name="servicos"
+            value="{{ servico.id }}"
+            data-duracao="{{ servico.duracao_minutos }}"
+        >
         <span>
             {{ servico.nome }}
             <span class="text-muted"> — {{ servico.duracao_minutos }} min — R$ {% widthratio servico.preco_centavos 100 1 %},00</span>
@@ -16,24 +22,29 @@
     </label>
     {% endfor %}
 
-    <h3>Funcionário</h3>
-    <select name="funcionario" required>
-        <option value="">Selecione um funcionário</option>
+    <h3>Barbeiro</h3>
+    <select name="barbeiro" id="barbeiro" required>
+        <option value="">Selecione um barbeiro</option>
         {% for funcionario in funcionarios %}
-        <option value="{{ funcionario.id }}">{{ funcionario.user.first_name }}</option>
+        <option value="{{ funcionario.id }}">{{ funcionario.user.get_full_name }}</option>
         {% endfor %}
     </select>
 
     <h3>Data e horário</h3>
-    <label>Data</label>
-    <input type="date" name="data" required>
+    <div id="horarios-container">
+        <p class="text-muted">Selecione os serviços e um barbeiro para ver os horários disponíveis.</p>
+    </div>
 
-    <label>Horário de início</label>
-    <input type="time" name="hora_inicio" required>
+    <input type="hidden" name="data" id="data-selecionada">
+    <input type="hidden" name="hora_inicio" id="hora-selecionada">
 
     <div class="links">
         <button type="submit">Confirmar agendamento</button>
         <a href="{% url 'home' %}" class="btn btn-secondary">Voltar</a>
     </div>
 </form>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/agendar.js' %}"></script>
 {% endblock %}

@@ -322,3 +322,13 @@ hr {
     font-size: 14px;
     margin-left: 10px;
 }
+
+.btn-selected {
+    background-color: #c9a84c;
+    color: #0f0f0f;
+    border-color: #c9a84c;
+}
+
+.horario-btn {
+    margin: 4px;
+}
